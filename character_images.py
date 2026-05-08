@@ -1,0 +1,17 @@
+character_images = {
+    "Homelander":      "homelander.jpg",
+    "Billy Butcher":   "butcher.jpg",
+    "Hughie Campbell": "hughie.jpg",
+    "Starlight":       "starlight.jpg",
+    "A-Train":         "a_train.jpg",
+    "The Deep":        "the_deep.jpg",
+    "Queen Maeve":     "queen_maeve.jpg",
+    "Black Noir":      "black_noir.jpg",
+    "Black Noir II":   "black_noir_2.jpg",
+    "Translucent":     "translucent.jpg",
+    "Stan Edgar":      "stan_edgar.jpg",
+    "Soldier Boy":     "soldier_boy.jpg",
+    "Sister Sage":     "sister_sage.jpg",
+    "Frenchie":        "frenchie.jpg",
+    "Kimiko":          "kimiko.jpg",
+}

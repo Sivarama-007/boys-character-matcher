@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Match — The Boys</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --blood: #c0392b;
+            --blood-dark: #7b241c;
+            --gold: #f0c040;
+            --dark: #080808;
+            --card: #111111;
+            --border: #2a2a2a;
+            --text: #f1f1f1;
+            --muted: #8b8b8b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top center, rgba(192,57,43,.18), transparent 45%),
+                var(--dark);
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 40px 20px 80px;
+        }
+
+        .top-back {
+            display: inline-block;
+            color: var(--muted);
+            text-decoration: none;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .top-back:hover {
+            color: var(--blood);
+        }
+
+        .hero-card {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 0;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            animation: fadeUp .7s ease;
+        }
+
+        .hero-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            min-height: 520px;
+        }
+
+        .hero-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 520px;
+            font-size: 6rem;
+            background: #151515;
+        }
+
+        .hero-content {
+            padding: 40px;
+        }
+
+        .match-label {
+            color: var(--blood);
+            font-size: .9rem;
+            font-weight: 700;
+            letter-spacing: .18em;
+            margin-bottom: 12px;
+        }
+
+        .archetype {
+            color: var(--gold);
+            font-size: .95rem;
+            font-weight: 700;
+            letter-spacing: .14em;
+            margin-bottom: 14px;
+        }
+
+        .hero-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 7vw, 5rem);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .hero-desc {
+            color: #c8c8c8;
+            line-height: 1.7;
+            font-size: 1.05rem;
+            margin-bottom: 30px;
+        }
+
+        .confidence-wrap {
+            margin-top: 20px;
+        }
+
+        .confidence-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .bar {
+            height: 10px;
+            background: #1d1d1d;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--blood-dark), var(--blood));
+            transition: width 1.2s ease;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 26px;
+            animation: fadeUp .8s ease;
+        }
+
+        .card-title {
+            color: var(--gold);
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            letter-spacing: .08em;
+        }
+
+        .trait-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .trait-chip {
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: rgba(192,57,43,.12);
+            border: 1px solid rgba(192,57,43,.35);
+            color: white;
+            font-weight: 600;
+        }
+
+        .trait-row {
+            margin-bottom: 14px;
+        }
+
+        .trait-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .mini-bar {
+            height: 7px;
+            background: #1d1d1d;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .mini-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--blood-dark), var(--blood));
+            transition: width 1.2s ease;
+        }
+
+        .top-matches {
+            margin-top: 28px;
+        }
+
+        .match-item {
+            display: grid;
+            grid-template-columns: 70px 1fr auto;
+            gap: 14px;
+            align-items: center;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 14px;
+            background: #0f0f0f;
+        }
+
+        .match-thumb {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .match-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .match-score {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .retry {
+            display: inline-block;
+            margin-top: 35px;
+            padding: 14px 26px;
+            border-radius: 12px;
+            background: var(--blood);
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .retry:hover {
+            background: var(--blood-dark);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media(max-width: 900px) {
+            .hero-card {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-img,
+            .hero-fallback {
+                min-height: 420px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content {
+                padding: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <a href="/" class="top-back">← Back to Quiz</a>
+
+    <div class="hero-card">
+
+        {% if char_image %}
+            <img
+                src="{{ url_for('static', filename='images/' + char_image) }}"
+                alt="{{ character }}"
+                class="hero-img"
+            >
+        {% else %}
+            <div class="hero-fallback">⚡</div>
+        {% endif %}
+
+        <div class="hero-content">
+            <div class="match-label">YOUR MATCH</div>
+            <div class="archetype">{{ archetype }}</div>
+            <div class="hero-name">{{ character }}</div>
+            <div class="hero-desc">{{ description }}</div>
+
+            <div class="confidence-wrap">
+                <div class="confidence-meta">
+                    <span>Match Confidence</span>
+                    <span>{{ confidence }}%</span>
+                </div>
+
+                <div class="bar">
+                    <div
+                        class="bar-fill"
+                        data-width="{{ confidence }}"
+                    ></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="card-title">WHY THIS MATCH</div>
+
+            <div class="trait-wrap">
+                {% for trait in top_traits %}
+                    <div class="trait-chip">
+                        {{ trait.replace('_', ' ').title() }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">TRAIT BREAKDOWN</div>
+
+            {% for trait, percent in trait_percentages.items() %}
+                <div class="trait-row">
+                    <div class="trait-meta">
+                        <span>{{ trait.replace('_', ' ').title() }}</span>
+                        <span>{{ percent }}%</span>
+                    </div>
+
+                    <div class="mini-bar">
+                        <div
+                            class="mini-fill"
+                            data-width="{{ percent }}"
+                        ></div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <div class="card top-matches">
+        <div class="card-title">TOP MATCHES</div>
+
+        {% for match in top_matches %}
+            <div class="match-item">
+
+                {% if match.image %}
+                    <img
+                        src="{{ url_for('static', filename='images/' + match.image) }}"
+                        class="match-thumb"
+                    >
+                {% else %}
+                    <div class="match-thumb">⚡</div>
+                {% endif %}
+
+                <div class="match-name">
+                    {{ match.name }}
+                </div>
+
+                <div class="match-score">
+                    {{ match.confidence }}%
+                </div>
+
+            </div>
+        {% endfor %}
+    </div>
+
+    <a href="/" class="retry">🔁 Take Quiz Again</a>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("[data-width]").forEach(el => {
+        el.style.width = el.dataset.width + "%";
+    });
+});
+</script>
+
+</body>
+</html>

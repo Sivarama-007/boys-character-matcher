@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Boys Character Matcher</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --blood: #c0392b;
+            --blood-dark: #7b241c;
+            --gold: #f0c040;
+            --dark: #080808;
+            --card: #111111;
+            --border: #2a2a2a;
+            --text: #f1f1f1;
+            --muted: #7a7a7a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(192,57,43,.15), transparent 40%),
+                radial-gradient(circle at bottom right, rgba(192,57,43,.1), transparent 40%),
+                var(--dark);
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 50px 20px 25px;
+        }
+
+        .hero h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            letter-spacing: .08em;
+            color: white;
+            text-shadow: 0 0 30px rgba(192,57,43,.5);
+        }
+
+        .hero span {
+            color: var(--blood);
+        }
+
+        .hero p {
+            color: var(--muted);
+            font-size: 1rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .mode-card input {
+            display: none;
+        }
+
+        .mode-card label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 18px;
+            border-radius: 14px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: .25s;
+            font-weight: 700;
+        }
+
+        .mode-card input:checked + label {
+            border-color: var(--blood);
+            background: rgba(192,57,43,.15);
+            color: var(--gold);
+        }
+
+        .mode-icon {
+            font-size: 1.6rem;
+        }
+
+        .progress-wrap {
+            margin-bottom: 25px;
+        }
+
+        .progress-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: .95rem;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #1d1d1d;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--blood-dark), var(--blood));
+            transition: width .4s ease;
+        }
+
+        .wizard-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 35px;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .question-meta {
+            color: var(--blood);
+            font-size: .9rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .option {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: .2s;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .option:hover {
+            border-color: var(--blood);
+            background: rgba(192,57,43,.08);
+        }
+
+        .option.selected {
+            border-color: var(--blood);
+            background: rgba(192,57,43,.14);
+        }
+
+        .option-key {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #1f1f1f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-key {
+            background: var(--blood);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn {
+            padding: 14px 26px;
+            border-radius: 10px;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .btn-prev {
+            background: #1d1d1d;
+            color: white;
+        }
+
+        .btn-next {
+            background: var(--blood);
+            color: white;
+        }
+
+        .btn-next:hover {
+            background: var(--blood-dark);
+        }
+
+        .loading-screen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.96);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .loading-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: .12em;
+            color: var(--blood);
+        }
+
+        .loading-text {
+            color: #ccc;
+            font-size: 1rem;
+            letter-spacing: .08em;
+        }
+
+        @media(max-width: 768px) {
+            .mode-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .wizard-card {
+                padding: 22px;
+            }
+
+            .question-text {
+                font-size: 1.2rem;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>THE <span>BOYS</span></h1>
+    <p>Character Matcher</p>
+</div>
+
+<div class="container">
+    <form method="POST" action="/result" id="quizForm">
+
+        <div class="mode-grid">
+            <div class="mode-card">
+                <input type="radio" name="mode" id="mode1" value="1">
+                <label for="mode1">
+                    <div class="mode-icon">💪</div>
+                    Physical
+                </label>
+            </div>
+
+            <div class="mode-card">
+                <input type="radio" name="mode" id="mode2" value="2">
+                <label for="mode2">
+                    <div class="mode-icon">🧠</div>
+                    Personality
+                </label>
+            </div>
+
+            <div class="mode-card">
+                <input type="radio" name="mode" id="mode3" value="3" checked>
+                <label for="mode3">
+                    <div class="mode-icon">⚡</div>
+                    Combined
+                </label>
+            </div>
+        </div>
+
+        <div class="progress-wrap">
+            <div class="progress-top">
+                <span id="progressText">Question 1</span>
+                <span id="progressPercent">0%</span>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        {% for q in questions %}
+        {% set q_index = loop.index0 %}
+        <div
+            class="wizard-card question-screen"
+            data-category="{{ q.category }}"
+            style="display:none;"
+        >
+            <div>
+                <div class="question-meta">{{ q.category|upper }}</div>
+                <div class="question-text">{{ q.question }}</div>
+
+                <div class="options">
+                    {% for key, val in q.options.items() %}
+                    <div class="option" onclick="selectOption(this)">
+                        <input type="radio" name="q{{ q_index }}" value="{{ key }}" hidden>
+                        <div class="option-key">{{ key }}</div>
+                        <div>{{ val.text }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="nav-buttons">
+            <button type="button" class="btn btn-prev" onclick="prevQuestion()">← Previous</button>
+            <button type="button" class="btn btn-next" onclick="nextQuestion()">Next →</button>
+        </div>
+
+    </form>
+</div>
+
+<div class="loading-screen" id="loadingScreen">
+    <div class="loading-title">ANALYZING...</div>
+    <div class="loading-text">Scanning psychological profile...</div>
+    <div class="loading-text">Matching against Vought database...</div>
+</div>
+
+<script>
+let current = 0;
+let visibleQuestions = [];
+
+function filterQuestions() {
+    const mode =
+        document.querySelector('input[name="mode"]:checked').value;
+
+    visibleQuestions = [];
+
+    document.querySelectorAll(".question-screen").forEach(q => {
+        const cat = q.dataset.category;
+
+        const show =
+            mode === "3" ||
+            (mode === "1" && cat === "physical") ||
+            (mode === "2" && cat === "personality");
+
+        q.style.display = "none";
+
+        if (show) {
+            visibleQuestions.push(q);
+        }
+    });
+
+    current = 0;
+    showQuestion();
+}
+
+function showQuestion() {
+    visibleQuestions.forEach(q => q.style.display = "none");
+
+    if (visibleQuestions.length > 0) {
+        visibleQuestions[current].style.display = "flex";
+    }
+
+    const percent =
+        ((current + 1) / visibleQuestions.length) * 100;
+
+    document.getElementById("progressFill").style.width = percent + "%";
+    document.getElementById("progressPercent").textContent =
+        Math.round(percent) + "%";
+
+    document.getElementById("progressText").textContent =
+        `Question ${current + 1} / ${visibleQuestions.length}`;
+}
+
+function selectOption(el) {
+    const parent = el.closest(".options");
+
+    parent.querySelectorAll(".option").forEach(o => {
+        o.classList.remove("selected");
+    });
+
+    el.classList.add("selected");
+    el.querySelector("input").checked = true;
+}
+
+function nextQuestion() {
+    const currentQuestion = visibleQuestions[current];
+    const checked =
+        currentQuestion.querySelector("input[type='radio']:checked");
+
+    if (!checked) {
+        alert("Choose an option first.");
+        return;
+    }
+
+    if (current < visibleQuestions.length - 1) {
+        current++;
+        showQuestion();
+    } else {
+        document.getElementById("loadingScreen").style.display = "flex";
+
+        setTimeout(() => {
+            document.getElementById("quizForm").submit();
+        }, 2200);
+    }
+}
+
+function prevQuestion() {
+    if (current > 0) {
+        current--;
+        showQuestion();
+    }
+}
+
+document
+.querySelectorAll('input[name="mode"]')
+.forEach(r => r.addEventListener("change", filterQuestions));
+
+filterQuestions();
+</script>
+
+</body>
+</html>
